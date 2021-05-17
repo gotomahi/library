@@ -1,8 +1,8 @@
 package com.library.library.exception;
 
-public class InvalidInputException extends RuntimeException{
+public class ExceedingLimitException extends RuntimeException{
 
-    public InvalidInputException(String message) {
+    public ExceedingLimitException(String message) {
         super(message);
     }
 }

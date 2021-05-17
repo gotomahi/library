@@ -30,8 +30,22 @@ public class BookController {
 
     @PutMapping("/{bookName}/rent")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<Integer> rentBook(String bookName) {
+    public ResponseEntity<Integer> rentBook(@PathVariable String bookName) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return ResponseEntity.ok().body(bookService.rentBook(bookName, authentication.getName()));
+    }
+
+    @PutMapping("/{bookName}/rent/{user}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<Integer> rentBook(@PathVariable String bookName, @PathVariable String user) {
+        return ResponseEntity.ok().body(bookService.rentBook(bookName, user));
+    }
+
+    @PutMapping("/{bookName}/return")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity returnBook(@PathVariable String bookName) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        bookService.returnBook(bookName, authentication.getName());
+        return ResponseEntity.ok().build();
     }
 }

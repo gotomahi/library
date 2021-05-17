@@ -1,8 +1,8 @@
 package com.library.library.exception;
 
-public class InvalidInputException extends RuntimeException{
+public class BookNotAvailableException extends RuntimeException{
 
-    public InvalidInputException(String message) {
+    public BookNotAvailableException(String message) {
         super(message);
     }
 }

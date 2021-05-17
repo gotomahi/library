@@ -1,6 +1,7 @@
 package com.library.library.controller;
 
-import com.library.library.exception.BookNotFoundException;
+import com.library.library.exception.BookNotAvailableException;
+import com.library.library.exception.ExceedingLimitException;
 import com.library.library.model.Book;
 import com.library.library.repository.BookStore;
 import org.junit.jupiter.api.BeforeAll;
@@ -70,8 +71,30 @@ public class BookControllerTest {
     @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     public void test_no_book_in_store_after_all_copies_rented(){
         bookController.rentBook("Time To Kill");
-        assertThrows(BookNotFoundException.class, () -> {
+        assertThrows(BookNotAvailableException.class, () -> {
             bookController.rentBook("Time To Kill");
         });
+    }
+
+    @Test
+    @WithMockUser(username = "admin", authorities = {"ROLE_ADMIN"})
+    public void test_user_not_allowed_more_than_two_books(){
+        bookController.addBook(new Book("Absalom Absalom"));
+        bookController.addBook(new Book("Invisible Man"));
+        bookController.addBook(new Book("Passage To India"));
+        bookController.rentBook("Time To Kill", "user");
+        bookController.rentBook("Absalom Absalom", "user");
+        bookController.rentBook("Passage To India", "user");
+        assertThrows(ExceedingLimitException.class, () -> {
+            bookController.rentBook("Invisible Man", "user");
+        });
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    public void test_return_book_to_store(){
+        bookController.rentBook("Time To Kill");
+        ResponseEntity response = bookController.returnBook("Time To Kill");
+        assertEquals(200, response.getStatusCode().value());
     }
 }

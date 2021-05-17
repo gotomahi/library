@@ -32,4 +32,11 @@ public class BookService {
         }
         return bookStore.rentBook(bookName, user);
     }
+
+    public void returnBook(String bookName, String user) {
+        if(bookName == null || user == null){
+            throw new InvalidInputException("Either book name or user is empty");
+        }
+        bookStore.returnBook(bookName, user);
+    }
 }

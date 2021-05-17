@@ -1,8 +1,8 @@
 package com.library.library.exception;
 
-public class InvalidInputException extends RuntimeException{
+public class MultipleCopiesNotAllowedException extends RuntimeException{
 
-    public InvalidInputException(String message) {
+    public MultipleCopiesNotAllowedException(String message) {
         super(message);
     }
 }
