@@ -28,4 +28,16 @@ public class BookStore {
         }
         return book.getCount();
     }
+
+    public Integer rentBook(String bookName, String user) {
+        Book book = store.get(bookName);
+        if(book == null){
+            throw new BookNotFoundException("Book not found in store");
+        }
+        book.decrement();
+        if(book.getCount() == 0){
+            store.remove(bookName);
+        }
+        return book.getCount();
+    }
 }

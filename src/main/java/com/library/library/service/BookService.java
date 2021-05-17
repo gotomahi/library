@@ -25,4 +25,11 @@ public class BookService {
         }
         return bookStore.getBookCount(name);
     }
+
+    public Integer rentBook(String bookName, String user) {
+        if(bookName == null || user == null){
+            throw new InvalidInputException("Either book name or user is empty");
+        }
+        return bookStore.rentBook(bookName, user);
+    }
 }

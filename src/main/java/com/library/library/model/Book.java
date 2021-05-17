@@ -19,4 +19,8 @@ public class Book {
     public void incrementCount() {
         count = (count == null) ? 1 : count + 1;
     }
+
+    public void decrement() {
+        count = count - 1;
+    }
 }

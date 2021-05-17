@@ -1,5 +1,6 @@
 package com.library.library.controller;
 
+import com.library.library.exception.BookNotFoundException;
 import com.library.library.model.Book;
 import com.library.library.repository.BookStore;
 import org.junit.jupiter.api.BeforeAll;
@@ -56,5 +57,21 @@ public class BookControllerTest {
         bookController.addBook(new Book("Time To Kill"));
         ResponseEntity<Integer> response = bookController.getBookCount("Time To Kill");
         assertEquals(2, response.getBody());
+    }
+
+    @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
+    public void test_rent_a_book(){
+        ResponseEntity<Integer> response = bookController.rentBook("Time To Kill");
+        assertEquals(0, response.getBody());
+    }
+
+    @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
+    public void test_no_book_in_store_after_all_copies_rented(){
+        bookController.rentBook("Time To Kill");
+        assertThrows(BookNotFoundException.class, () -> {
+            bookController.rentBook("Time To Kill");
+        });
     }
 }
