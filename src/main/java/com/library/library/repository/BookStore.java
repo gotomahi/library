@@ -13,15 +13,18 @@ import java.util.Map;
 @Component
 public class BookStore {
     private static Map<String, Book> store = new HashMap<>();
+
+    public void clear(){
+        store.clear();
+    }
+
     public void addBook(Book book) {
-        if(book != null) {
-            if(store.get(book.getName()) == null) {
-                store.put(book.getName(), book);
-            }else{
-                book = store.get(book.getName());
-            }
-            book.incrementCount();
+        if(store.get(book.getName()) == null) {
+            store.put(book.getName(), book);
+        }else{
+            book = store.get(book.getName());
         }
+        book.incrementCount();
     }
 
     public Integer getBookCount(String name) {

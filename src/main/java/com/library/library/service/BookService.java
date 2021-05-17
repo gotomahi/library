@@ -11,32 +11,22 @@ public class BookService {
     @Autowired
     private BookStore bookStore;
 
-    public void saveBook(Book book) throws InvalidInputException {
-        if(book != null) {
-            this.bookStore.addBook(book);
-        }else{
-            throw new InvalidInputException("Empty book is not allowed to add");
-        }
+    public void saveBook(Book book) {
+        this.bookStore.addBook(book);
     }
 
     public Integer getBookCount(String name) {
         if(name == null){
-            throw new InvalidInputException("Empty book name is not allowed");
+            throw new InvalidInputException("Book name is empty");
         }
         return bookStore.getBookCount(name);
     }
 
     public Integer rentBook(String bookName, String user) {
-        if(bookName == null || user == null){
-            throw new InvalidInputException("Either book name or user is empty");
-        }
         return bookStore.rentBook(bookName, user);
     }
 
     public void returnBook(String bookName, String user) {
-        if(bookName == null || user == null){
-            throw new InvalidInputException("Either book name or user is empty");
-        }
         bookStore.returnBook(bookName, user);
     }
 }
