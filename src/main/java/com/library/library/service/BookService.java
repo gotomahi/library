@@ -18,4 +18,11 @@ public class BookService {
             throw new InvalidInputException("Empty book is not allowed to add");
         }
     }
+
+    public Integer getBookCount(String name) {
+        if(name == null){
+            throw new InvalidInputException("Empty book name is not allowed");
+        }
+        return bookStore.getBookCount(name);
+    }
 }

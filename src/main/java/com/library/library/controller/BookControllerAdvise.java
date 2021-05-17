@@ -1,9 +1,9 @@
 package com.library.library.controller;
 
+import com.library.library.exception.BookNotFoundException;
 import com.library.library.exception.InvalidInputException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -14,8 +14,8 @@ public class BookControllerAdvise {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
-    @ExceptionHandler(value = {AccessDeniedException.class})
-    public ResponseEntity handleAccessDeniedException(AccessDeniedException ex){
+    @ExceptionHandler(value = {BookNotFoundException.class})
+    public ResponseEntity handleBookNotFoundException(BookNotFoundException ex){
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
 }

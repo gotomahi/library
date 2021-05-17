@@ -42,4 +42,19 @@ public class BookControllerTest {
             bookController.addBook(new Book("Absalom Absalom"));
         });
     }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    public void test_available_book_count(){
+        ResponseEntity<Integer> response = bookController.getBookCount("Time To Kill");
+        assertEquals(1, response.getBody());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    public void test_available_book_count_after_addition(){
+        bookController.addBook(new Book("Time To Kill"));
+        ResponseEntity<Integer> response = bookController.getBookCount("Time To Kill");
+        assertEquals(2, response.getBody());
+    }
 }
