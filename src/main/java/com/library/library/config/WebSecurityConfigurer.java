@@ -18,7 +18,8 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().anyRequest().authenticated().and().httpBasic();
+        http.csrf().disable()
+                .authorizeRequests().anyRequest().authenticated().and().httpBasic();
     }
 
     @Override
@@ -29,8 +30,8 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Bean
     public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
         return new InMemoryUserDetailsManager(
-                new User("admin", "admin", Collections.singletonList(new SimpleGrantedAuthority("Admin"))),
-                new User("user", "user", Collections.singletonList(new SimpleGrantedAuthority("User")))
+                new User("admin", "{noop}admin", Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN"))),
+                new User("user", "{noop}user", Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")))
         );
     }
 }

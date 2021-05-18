@@ -1,21 +1,26 @@
 package com.library.library.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Book {
     private String name;
     private Integer count;
-    private List<String> users;
+    private List<String> users = new ArrayList<>();
+
+    public Book() {
+    }
 
     public Book(String name) {
-        this.users = new ArrayList<>();
         this.name = name;
     }
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name){
+        this.name = name;
     }
 
     public Integer getCount() {

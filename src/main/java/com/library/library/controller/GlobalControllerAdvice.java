@@ -7,12 +7,15 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @ControllerAdvice
 public class GlobalControllerAdvice {
     @ExceptionHandler(value = {AccessDeniedException.class})
     public ResponseEntity<GenericResult> handleAccessDeniedException(Exception ex){
-        GenericResult result = new GenericResult(false);
-        result.addError("Unauthorized access");
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result);
+        List<String> errors = new ArrayList<>();
+        errors.add("Unauthorized access");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new GenericResult(false, errors));
     }
 }

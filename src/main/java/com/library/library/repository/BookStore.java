@@ -1,9 +1,5 @@
 package com.library.library.repository;
 
-import com.library.library.exception.BookNotAvailableException;
-import com.library.library.exception.BookNotFoundException;
-import com.library.library.exception.ExceedingLimitException;
-import com.library.library.exception.MultipleCopiesNotAllowedException;
 import com.library.library.model.Book;
 import org.springframework.stereotype.Component;
 

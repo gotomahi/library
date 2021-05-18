@@ -1,13 +1,10 @@
 package com.library.library.controller;
 
-import com.library.library.exception.*;
 import com.library.library.model.Book;
 import com.library.library.model.GenericResult;
 import com.library.library.repository.BookStore;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +55,7 @@ public class BookControllerTest {
     public void test_available_book_count_for_invalid_input(){
         ResponseEntity<GenericResult<Integer>> response = bookController.getBookCount(null);
         assertEquals(false, response.getBody().isSuccess());
+        assertEquals(1, response.getBody().getErrors().size());
         assertEquals(true, response.getBody().hasError("Book name is empty"));
     }
 
@@ -81,7 +79,9 @@ public class BookControllerTest {
     @Test
     @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     public void test_rent_a_book(){
-        bookStore.addBook(new Book("Time To Kill"));
+        Book book = new Book();
+        book.setName("Time To Kill");
+        bookStore.addBook(book);
         ResponseEntity<GenericResult<Integer>> response = bookController.rentBook("Time To Kill");
         assertEquals(0, response.getBody().getResult().intValue());
     }

@@ -8,13 +8,13 @@ public class GenericResult<B> {
     private boolean success;
     private List<String> errors = new ArrayList<>();
 
-    public GenericResult(B result, boolean success){
-        this.result = result;
+    public GenericResult(boolean success){
         this.success = success;
     }
 
-    public GenericResult(boolean success){
+    public GenericResult(boolean success, List<String> errors){
         this.success = success;
+        this.errors = errors;
     }
 
     public GenericResult(){
@@ -26,6 +26,10 @@ public class GenericResult<B> {
 
     public boolean hasError(String error){
         return this.errors.contains(error);
+    }
+
+    public List<String> getErrors() {
+        return errors;
     }
 
     public boolean isSuccess() {
