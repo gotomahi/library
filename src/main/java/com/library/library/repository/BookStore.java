@@ -27,25 +27,12 @@ public class BookStore {
         book.incrementCount();
     }
 
-    public Integer getBookCount(String name) {
-        Book book = store.get(name);
-        if(book == null){
-            throw new BookNotFoundException("Book not found in store");
-        }
-        return book.getCount();
+    public Book getBook(String bookName){
+        return store.get(bookName);
     }
 
     public Integer rentBook(String bookName, String user) {
         Book book = store.get(bookName);
-        if(book == null){
-            throw new BookNotFoundException("Book not found in store");
-        }else if(book.getCount() == 0){
-            throw new BookNotAvailableException("Book not available in store");
-        }else if(book.isAlreadyTaken(user)){
-            throw new MultipleCopiesNotAllowedException("Multiple copies are not allowed to same user");
-        }else if(isUserReachedLimit(user)){
-            throw new ExceedingLimitException("User is not allowed more than 3 books");
-        }
         book.decrementCount();
         book.addUser(user);
         return book.getCount();

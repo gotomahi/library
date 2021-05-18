@@ -1,8 +1,10 @@
 package com.library.library.controller;
 
 import com.library.library.model.Book;
+import com.library.library.model.GenericResult;
 import com.library.library.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -17,35 +19,37 @@ public class BookController {
 
     @PostMapping("/add")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity addBook(@RequestBody Book book) {
-        this.bookService.saveBook(book);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<GenericResult> addBook(@RequestBody Book book) {
+        return getResponseEntity(this.bookService.saveBook(book));
     }
 
     @GetMapping("/{name}/count")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
-    public ResponseEntity<Integer> getBookCount(@PathVariable String name) {
-        return ResponseEntity.ok().body(bookService.getBookCount(name));
+    public ResponseEntity<GenericResult<Integer>> getBookCount(@PathVariable String name) {
+        return getResponseEntity(bookService.getBookCount(name));
     }
 
     @PutMapping("/{bookName}/rent")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<Integer> rentBook(@PathVariable String bookName) {
+    public ResponseEntity<GenericResult<Integer>> rentBook(@PathVariable String bookName) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ResponseEntity.ok().body(bookService.rentBook(bookName, authentication.getName()));
+        return getResponseEntity(bookService.rentBook(bookName, authentication.getName()));
     }
 
     @PutMapping("/{bookName}/rent/{user}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<Integer> rentBook(@PathVariable String bookName, @PathVariable String user) {
-        return ResponseEntity.ok().body(bookService.rentBook(bookName, user));
+    public ResponseEntity<GenericResult<Integer>> rentBook(@PathVariable String bookName, @PathVariable String user) {
+        return getResponseEntity(bookService.rentBook(bookName, user));
     }
 
     @PutMapping("/{bookName}/return")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity returnBook(@PathVariable String bookName) {
+    public ResponseEntity<GenericResult> returnBook(@PathVariable String bookName) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        bookService.returnBook(bookName, authentication.getName());
-        return ResponseEntity.ok().build();
+        return getResponseEntity(bookService.returnBook(bookName, authentication.getName()));
+    }
+
+    private ResponseEntity getResponseEntity(GenericResult result){
+        return ResponseEntity.status(result.isSuccess()? HttpStatus.OK : HttpStatus.BAD_REQUEST).body(result);
     }
 }

@@ -2,6 +2,7 @@ package com.library.library.controller;
 
 import com.library.library.exception.*;
 import com.library.library.model.Book;
+import com.library.library.model.GenericResult;
 import com.library.library.repository.BookStore;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,8 +33,8 @@ public class BookControllerTest {
     @WithMockUser(authorities = {"ROLE_ADMIN"})
     public void testAddBook(){
         Book book = new Book("Absalom Absalom");
-        ResponseEntity<Book> response = bookController.addBook(book);
-        assertEquals(200, response.getStatusCode().value());
+        ResponseEntity<GenericResult> response = bookController.addBook(book);
+        assertEquals(true, response.getBody().isSuccess());
     }
 
     @Test
@@ -48,24 +49,24 @@ public class BookControllerTest {
     @WithMockUser(authorities = {"ROLE_USER"})
     public void test_available_book_count(){
         bookStore.addBook(new Book("Time To Kill"));
-        ResponseEntity<Integer> response = bookController.getBookCount("Time To Kill");
-        assertEquals(1, response.getBody());
+        ResponseEntity<GenericResult<Integer>> response = bookController.getBookCount("Time To Kill");
+        assertEquals(1, response.getBody().getResult().intValue());
     }
 
     @Test
     @WithMockUser(authorities = {"ROLE_USER"})
     public void test_available_book_count_for_invalid_input(){
-        assertThrows(InvalidInputException.class, ()->{
-            bookController.getBookCount(null);
-        });
+        ResponseEntity<GenericResult<Integer>> response = bookController.getBookCount(null);
+        assertEquals(false, response.getBody().isSuccess());
+        assertEquals(true, response.getBody().hasError("Book name is empty"));
     }
 
     @Test
     @WithMockUser(authorities = {"ROLE_USER"})
     public void test_available_book_count_that_doesnot_exists(){
-        assertThrows(BookNotFoundException.class, () -> {
-            bookController.getBookCount("Test Book");
-        });
+        ResponseEntity<GenericResult<Integer>> response = bookController.getBookCount("Test Book");
+        assertEquals(false, response.getBody().isSuccess());
+        assertEquals(true, response.getBody().hasError("Book not found in store"));
     }
 
     @Test
@@ -73,16 +74,16 @@ public class BookControllerTest {
     public void test_available_book_count_after_addition(){
         bookController.addBook(new Book("The Great Gatsby"));
         bookController.addBook(new Book("The Great Gatsby"));
-        ResponseEntity<Integer> response = bookController.getBookCount("The Great Gatsby");
-        assertEquals(2, response.getBody());
+        ResponseEntity<GenericResult<Integer>> response = bookController.getBookCount("The Great Gatsby");
+        assertEquals(2, response.getBody().getResult().intValue());
     }
 
     @Test
     @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     public void test_rent_a_book(){
         bookStore.addBook(new Book("Time To Kill"));
-        ResponseEntity<Integer> response = bookController.rentBook("Time To Kill");
-        assertEquals(0, response.getBody());
+        ResponseEntity<GenericResult<Integer>> response = bookController.rentBook("Time To Kill");
+        assertEquals(0, response.getBody().getResult().intValue());
     }
 
     @Test
@@ -90,17 +91,17 @@ public class BookControllerTest {
     public void test_no_book_in_store_after_all_copies_rented(){
         bookStore.addBook(new Book("Beloved"));
         bookController.rentBook("Beloved");
-        assertThrows(BookNotAvailableException.class, () -> {
-            bookController.rentBook("Beloved");
-        });
+        ResponseEntity<GenericResult<Integer>> response = bookController.rentBook("Beloved");
+        assertEquals(false, response.getBody().isSuccess());
+        assertEquals(true, response.getBody().hasError("Book not available in store"));
     }
 
     @Test
     @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     public void test_book_not_found_in_store(){
-        assertThrows(BookNotFoundException.class, () -> {
-            bookController.rentBook("Test Book");
-        });
+        ResponseEntity<GenericResult<Integer>> response = bookController.rentBook("Test Book");
+        assertEquals(false, response.getBody().isSuccess());
+        assertEquals(true, response.getBody().hasError("Book not found in store"));
     }
 
     @Test
@@ -109,9 +110,9 @@ public class BookControllerTest {
         bookStore.addBook(new Book("Invisible Man"));
         bookStore.addBook(new Book("Invisible Man"));
         bookController.rentBook("Invisible Man");
-        assertThrows(MultipleCopiesNotAllowedException.class, () -> {
-            bookController.rentBook("Invisible Man");
-        });
+        ResponseEntity<GenericResult<Integer>> response = bookController.rentBook("Invisible Man");
+        assertEquals(false, response.getBody().isSuccess());
+        assertEquals(true, response.getBody().hasError("Multiple copies are not allowed to same user"));
     }
 
     @Test
@@ -124,9 +125,9 @@ public class BookControllerTest {
         bookController.rentBook("The Great Gatsby", "user");
         bookController.rentBook("Absalom Absalom", "user");
         bookController.rentBook("Passage To India", "user");
-        assertThrows(ExceedingLimitException.class, () -> {
-            bookController.rentBook("Invisible Man", "user");
-        });
+        ResponseEntity<GenericResult<Integer>> response = bookController.rentBook("Invisible Man", "user");
+        assertEquals(false, response.getBody().isSuccess());
+        assertEquals(true, response.getBody().hasError("User is not allowed more than 3 books"));
     }
 
     @Test
