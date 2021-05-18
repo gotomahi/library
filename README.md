@@ -1,5 +1,5 @@
 This is a Library management task and assuming enrollment of user and payment for renting book is not considered.
-Data is store inmemory and only two users added to the appliation. (user, admin).
+Data is store inmemory and only two users added to the appliation. (user/user, admin/admin).
 
 Each user is allowed maximum of 3 books and not allowed same copy of book.
 
